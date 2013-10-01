@@ -1,0 +1,6 @@
+adapter: mysql2
+database: kinopoisk
+host: localhost
+username: root 
+password: ladder
+encoding: utf8
