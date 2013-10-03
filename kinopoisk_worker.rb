@@ -2,7 +2,7 @@ class KinopoiskWorker
 
   require 'open-uri'
   require 'mechanize'
-  require './page_parser.rb'
+  require './kinopoisk_page_parser.rb'
   require './models/film.rb'
 
   URL = "http://www.kinopoisk.ru/"
@@ -19,7 +19,7 @@ class KinopoiskWorker
     film = retreive_data(page)
     save_poster(film)
     save_table(film)
-    film
+    film.save
   end
 
   def search_film(film)
@@ -33,9 +33,9 @@ class KinopoiskWorker
   end
 
   def retreive_data(page)
-    kfp = KinopoiskFilmParser.new(page)
+    kfp = KinopoiskPageParser.new(page)
     film = Film.new
-    KinopoiskFilmParser.instance_methods(false).each do |method|
+    KinopoiskPageParser.instance_methods(false).each do |method|
       film[method] = kfp.send(method)
     end
     film.kinopoisk_id = get_page_id(page)
@@ -66,5 +66,5 @@ class KinopoiskWorker
 end
 
 film_title = "Good Year"
-kp = KinopoiskConnector.new
+kp = KinopoiskWorker.new
 film = kp.process_film film_title
