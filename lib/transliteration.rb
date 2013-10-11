@@ -45,6 +45,11 @@ module Russian
     UPPER = (UPPER_SINGLE.merge(UPPER_MULTI)).freeze
     MULTI_KEYS = (LOWER_MULTI.merge(UPPER_MULTI)).keys.sort_by {|s| s.length}.reverse.freeze
 
+    re_lower = LOWER.invert.sort_by{ |key, value| key.length } 
+
+    re_lower.extract!("")
+    re_upper = UPPER.invert
+
     # Transliterate a string with russian characters
     #
     # Возвращает строку, в которой все буквы русского алфавита заменены на похожую по звучанию латиницу
@@ -68,5 +73,26 @@ module Russian
 
       result
     end
+
+    def re_transliterate(str)
+      chars = str.chars_to_a #scan(%r{#{MULTI_KEYS.join '|'}|\w|.})
+
+      result = ""
+
+      chars.each_with_index do |char, index|
+        rez = nil
+        re_lower.each do |key, value| 
+          if chars[index..key.length].join == key
+            rez = value
+            break
+          end
+        end
+        result << (rez || char)
+      end
+
+      result
+    end
+
+    
   end
 end

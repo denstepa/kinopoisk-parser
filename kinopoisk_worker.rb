@@ -14,9 +14,15 @@ class KinopoiskWorker
     }
   end
 
-  def process_film(film_title)
-    page = search_film(film_title)
-    film = retreive_data(page)
+  def process_all
+    Film.where(:isparsed => false).each do |curent_film|
+      process_film(curent_film)
+    end
+  end
+
+  def process_film(film)
+    page = search_film(film.file_name)
+    film = retreive_data(film, page)
     save_poster(film)
     save_table(film)
     film.save
@@ -32,9 +38,8 @@ class KinopoiskWorker
     end
   end
 
-  def retreive_data(page)
+  def retreive_data(film page)
     kfp = KinopoiskPageParser.new(page)
-    film = Film.new
     KinopoiskPageParser.instance_methods(false).each do |method|
       film[method] = kfp.send(method)
     end
@@ -65,6 +70,6 @@ class KinopoiskWorker
   end
 end
 
-film_title = "Good Year"
-kp = KinopoiskWorker.new
-film = kp.process_film film_title
+#film_title = "Good Year"
+#kp = KinopoiskWorker.new
+#film = kp.process_film film_title

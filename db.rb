@@ -28,6 +28,7 @@ class Db
         String   :actors
         String   :page_url
         DateTime :updated_at
+	Boolean  :isparsed
       end
     end
 
